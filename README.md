@@ -171,7 +171,8 @@ Dans un graphe non orienté, l'adjacence est symétrique, ce qui signifie que si
 
 Dans un graphe orienté, l'adjacence peut être asymétrique, ce qui signifie qu'un sommet peut être adjacent à un autre sans que la relation soit réciproque. Par exemple, dans un graphe représentant des villes et des routes, la route peut aller d'une ville A à une ville B sans qu'il y ait forcément une route de B à A.
 
-**Question :** Quelle structure de données pourrait être utilisée pour stocker les relations entre les nœuds du graphe et les informations associées à ces relations, comme les coûts des arêtes ?
+**Question :** Quelle structure de données pourrait être utilisée pour stocker les relations entre les nœuds du graphe et les informations associées à ces relations, comme les coûts des arêtes ?<br>
+**Réponse :** Une matrice d'adjacence ou une liste d'adjacence.
 
 - `public void ajouterNoeud(Noeud<E> noeud)`: Cette méthode ajoute un nœud au graphe si le nœud n'existe pas déjà dans le graphe.
 
@@ -183,8 +184,8 @@ Dans un graphe orienté, l'adjacence peut être asymétrique, ce qui signifie qu
 
 - `public List<Noeud<E>> getVoisins(Noeud<E> noeud)`: Cette méthode renvoie une liste contenant tous les voisins d'un nœud spécifié. Si le nœud n'existe pas dans le graphe, elle renvoie une liste vide.
 
-**Question :** Pourquoi pensez-vous que les classes `Noeud` et `Graphe` ont été définies avec des paramètres génériques ?
-
+**Question :** Pourquoi pensez-vous que les classes `Noeud` et `Graphe` ont été définies avec des paramètres génériques ?<br>
+**Réponse :** Les paramètres génériques permettent de créer des classes qui peuvent être utilisées avec différents types de données, ce qui les rend plus flexibles et réutilisables.
 ### Interface `AlgorithmeChemin`
 
 L'interface `fr.ecole3il.rodez2023.carte.chemin.algorithmes.AlgorithmeChemin<E>` définit un contrat pour les classes qui implémentent des algorithmes de recherche de chemin dans un graphe :
@@ -193,7 +194,6 @@ L'interface `fr.ecole3il.rodez2023.carte.chemin.algorithmes.AlgorithmeChemin<E>`
 
 
 **Question :** Pourquoi pensez-vous que la création d'une interface est une bonne pratique dans ce contexte ?
-
 ### Classe `AlgorithmeDijkstra`
 
 La classe `fr.ecole3il.rodez2023.carte.chemin.algorithmes.AlgorithmeDijkstra<E>` implémente l'interface `AlgorithmeChemin<E>` et fournit une implémentation de l'algorithme de Dijkstra pour trouver le chemin le plus court entre deux nœuds dans un graphe pondéré.
