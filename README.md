@@ -193,7 +193,9 @@ L'interface `fr.ecole3il.rodez2023.carte.chemin.algorithmes.AlgorithmeChemin<E>`
 - `List<Noeud<E>> trouverChemin(Graphe<E> graphe, Noeud<E> depart, Noeud<E> arrivee)`: Cette méthode est responsable de trouver un chemin entre un nœud de départ et un nœud d'arrivée dans un graphe donné. Elle prend en paramètres le graphe dans lequel la recherche doit être effectuée, ainsi que les nœuds de départ et d'arrivée. Cette méthode renvoie une liste de nœuds représentant le chemin trouvé entre le nœud de départ et le nœud d'arrivée dans le graphe.
 
 
-**Question :** Pourquoi pensez-vous que la création d'une interface est une bonne pratique dans ce contexte ?
+**Question :** Pourquoi pensez-vous que la création d'une interface est une bonne pratique dans ce contexte ?<br><br>
+**Réponse:** L'interface `AlgorithmeChemin` est une bonne pratique car elle permet de définir un contrat pour les classes qui implémentent des algorithmes de recherche de chemin dans un graphe. Cela permet de définir une structure commune pour ces classes, ce qui facilite leur utilisation et leur interchangeabilité. En utilisant une interface, on peut s'assurer que les classes qui implémentent l'interface fournissent les méthodes requises, ce qui rend le code plus robuste et plus facile à maintenir.
+
 ### Classe `AlgorithmeDijkstra`
 
 La classe `fr.ecole3il.rodez2023.carte.chemin.algorithmes.AlgorithmeDijkstra<E>` implémente l'interface `AlgorithmeChemin<E>` et fournit une implémentation de l'algorithme de Dijkstra pour trouver le chemin le plus court entre deux nœuds dans un graphe pondéré.
