@@ -112,7 +112,6 @@ public class CarteGUI extends JFrame {
 				}
 			}
 		}
-
 		if (caseDepart != null && caseArrivee != null) {
 			Chemin chemin = AdaptateurAlgorithme.trouverChemin(algorithme, carte, caseDepart.getX(), caseDepart.getY(), caseArrivee.getX(), caseArrivee.getY());			g.setColor(Color.RED);
 			for (Case c : chemin.getCases()) {
