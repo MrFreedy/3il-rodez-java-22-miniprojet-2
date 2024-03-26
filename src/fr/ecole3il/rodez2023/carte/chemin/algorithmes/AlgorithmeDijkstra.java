@@ -6,46 +6,45 @@ import fr.ecole3il.rodez2023.carte.chemin.elements.Noeud;
 import java.util.*;
 
 public class AlgorithmeDijkstra<E> implements AlgorithmeChemin<E> {
-
+    
     @Override
     public List<Noeud<E>> trouverChemin(Graphe<E> graphe, Noeud<E> depart, Noeud<E> arrivee) {
-        Map<Noeud<E>, Noeud<E>> precedent = new HashMap<>();
-        Map<Noeud<E>, Double> distance = new HashMap<>();
-        PriorityQueue<Noeud<E>> queue = new PriorityQueue<>(Comparator.comparingDouble(distance::get));
+        Map<Noeud<E>, Double> costs = new HashMap<>();
+        Map<Noeud<E>, Noeud<E>> previous = new HashMap<>();
 
-        for (Noeud<E> node : graphe.getNoeuds()) {
-            distance.put(node, Double.POSITIVE_INFINITY);
-            precedent.put(node, null);
+        for (Noeud<E> noeud : graphe.getNoeuds()) {
+            costs.put(noeud, Double.POSITIVE_INFINITY);
+            previous.put(noeud, null);
         }
-        distance.put(depart, 0.0);
-        queue.add(depart);
+        costs.put(depart, 0.0);
 
-        while (!queue.isEmpty()) {
-            Noeud<E> current = queue.poll();
+        PriorityQueue<Noeud<E>> priorityQueue = new PriorityQueue<>((n1, n2) -> (int) (costs.get(n1) - costs.get(n2)));
+        priorityQueue.add(depart);
 
-            if (current.equals(arrivee))
-                break;
+        while (!priorityQueue.isEmpty()) {
+            Noeud<E> noeud = priorityQueue.poll();
+            if (noeud.equals(arrivee)) break;
 
-            for (Noeud<E> voisin : graphe.getVoisins(current)) {
-                double newDistance = distance.get(current) + graphe.getCoutArete(current, voisin);
-                if (newDistance < distance.get(voisin)) {
-                    queue.remove(voisin);
-                    distance.put(voisin, newDistance);
-                    precedent.put(voisin, current);
-                    queue.add(voisin);
+            for (Noeud<E> neighbor : graphe.getVoisins(noeud)) {
+                double cost = costs.get(noeud) + graphe.getCoutArete(noeud, neighbor);
+                if (cost < costs.get(neighbor)) {
+                    costs.put(neighbor, cost);
+                    previous.put(neighbor, noeud);
+                    priorityQueue.add(neighbor);
                 }
             }
         }
 
-        LinkedList<Noeud<E>> chemin = new LinkedList<>();
-        Noeud<E> current = arrivee;
-        while (current != null) {
-            chemin.addFirst(current);
-            current = precedent.get(current);
+        List<Noeud<E>> shortestPath = new LinkedList<>();
+        Noeud<E> noeud = arrivee;
+        while (noeud != null) {
+            shortestPath.add(0, noeud);
+            noeud = previous.get(noeud);
         }
-        if (chemin.getFirst().equals(depart))
-            return chemin;
-        else
-            return new LinkedList<>();  // No path found
+        Collections.reverse(shortestPath);
+
+        return shortestPath;
     }
+
+
 }
