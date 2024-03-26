@@ -10,7 +10,19 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.PriorityQueue;
 
+/**
+ * Algorithme A* to find the shortest path between two nodes in a graph.
+ *
+ * @param <E>
+ */
 public class AlgorithmeAEtoile<E> implements AlgorithmeChemin<E> {
+    /**
+     * Find the shortest path between two nodes in a graph.
+     * @param graphe it is the graph where the nodes are.
+     * @param depart it is the node where the path starts.
+     * @param arrivee it is the node where the path ends.
+     * @return the shortest path between the two nodes.
+     */
     @Override
     public List<Noeud<E>> trouverChemin(Graphe<E> graphe, Noeud<E> depart, Noeud<E> arrivee) {
         Map<Noeud<E>, Double> estimatedCost = new HashMap<>();

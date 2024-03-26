@@ -5,8 +5,18 @@ import fr.ecole3il.rodez2023.carte.chemin.elements.Noeud;
 
 import java.util.*;
 
+/**
+ * Djikstra's algorithm to find the shortest path between two nodes in a graph.
+ * @param <E>
+ */
 public class AlgorithmeDijkstra<E> implements AlgorithmeChemin<E> {
-    
+    /**
+     * Find the shortest path between two nodes in a graph.
+     * @param graphe it is the graph where the nodes are.
+     * @param depart it is the node where the path starts.
+     * @param arrivee it is the node where the path ends.
+     * @return the shortest path between the two nodes.
+     */
     @Override
     public List<Noeud<E>> trouverChemin(Graphe<E> graphe, Noeud<E> depart, Noeud<E> arrivee) {
         Map<Noeud<E>, Double> costs = new HashMap<>();
