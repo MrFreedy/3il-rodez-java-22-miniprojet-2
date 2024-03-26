@@ -3,63 +3,54 @@ package fr.ecole3il.rodez2023.carte.chemin.algorithmes;
 import fr.ecole3il.rodez2023.carte.chemin.elements.Graphe;
 import fr.ecole3il.rodez2023.carte.chemin.elements.Noeud;
 
-import java.util.*;
+import java.util.List;
+import java.util.LinkedList;
+import java.util.Collections;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.PriorityQueue;
 
 public class AlgorithmeAEtoile<E> implements AlgorithmeChemin<E> {
-
-    // Heuristic function (Estimated cost from node n to the goal node)
-    protected double h(Noeud<E> n, Noeud<E> goal) {
-        // Implement the heuristic function here
-        return 0;
-    }
-
     @Override
     public List<Noeud<E>> trouverChemin(Graphe<E> graphe, Noeud<E> depart, Noeud<E> arrivee) {
-        Map<Noeud<E>, Double> g = new HashMap<>();
-        Map<Noeud<E>, Double> f = new HashMap<>();
-        Map<Noeud<E>, Noeud<E>> precedent = new HashMap<>();
-        Set<Noeud<E>> explored = new HashSet<>();
-        PriorityQueue<Noeud<E>> queue = new PriorityQueue<>(Comparator.comparingDouble(f::get));
+        Map<Noeud<E>, Double> estimatedCost = new HashMap<>();
+        Map<Noeud<E>, Double> actualCost = new HashMap<>();
+        Map<Noeud<E>, Noeud<E>> previous = new HashMap<>();
 
-        for (Noeud<E> node : graphe.getNoeuds()) {
-            f.put(node, Double.POSITIVE_INFINITY);
-            g.put(node, Double.POSITIVE_INFINITY);
-            precedent.put(node, null);
+        for (Noeud<E> noeud : graphe.getNoeuds()) {
+            estimatedCost.put(noeud, Double.POSITIVE_INFINITY);
+            actualCost.put(noeud, Double.POSITIVE_INFINITY);
+            previous.put(noeud, null);
         }
-        g.put(depart, 0.0);
-        f.put(depart, h(depart, arrivee));
-        queue.add(depart);
+        estimatedCost.put(depart, 0.0);
+        actualCost.put(depart, 0.0);
 
-        while (!queue.isEmpty()) {
-            Noeud<E> current = queue.poll();
-            if (current.equals(arrivee))
-                break;
-            explored.add(current);
+        PriorityQueue<Noeud<E>> priorityQueue = new PriorityQueue<>((n1, n2) -> (int) (estimatedCost.get(n1) - estimatedCost.get(n2)));
+        priorityQueue.add(depart);
 
-            for (Noeud<E> voisin : graphe.getVoisins(current)) {
-                if (explored.contains(voisin))
-                    continue;
+        while (!priorityQueue.isEmpty()) {
+            Noeud<E> noeud = priorityQueue.poll();
+            if (noeud.equals(arrivee)) break;
 
-                double tentativeG = g.get(current) + graphe.getCoutArete(current, voisin);
-                if (tentativeG < g.get(voisin)) {
-                    precedent.put(voisin, current);
-                    g.put(voisin, tentativeG);
-                    f.put(voisin, g.get(voisin) + h(voisin, arrivee));
-                    if (!queue.contains(voisin))
-                        queue.add(voisin);
+            for (Noeud<E> neighbor : graphe.getVoisins(noeud)) {
+                double cost = actualCost.get(noeud) + graphe.getCoutArete(noeud, neighbor);
+                if (cost < actualCost.get(neighbor)) {
+                    previous.put(neighbor, noeud);
+                    actualCost.put(neighbor, cost);
+                    estimatedCost.put(neighbor, cost);
+                    priorityQueue.add(neighbor);
                 }
             }
         }
 
-        LinkedList<Noeud<E>> chemin = new LinkedList<>();
-        Noeud<E> current = arrivee;
-        while (current != null) {
-            chemin.addFirst(current);
-            current = precedent.get(current);
+        List<Noeud<E>> path = new LinkedList<>();
+        Noeud<E> noeud = arrivee;
+        while (noeud != null) {
+            path.add(noeud);
+            noeud = previous.get(noeud);
         }
-        if (chemin.getFirst().equals(depart))
-            return chemin;
-        else
-            return new LinkedList<>();  // No path found
+        Collections.reverse(path);
+
+        return path;
     }
 }
