@@ -1,0 +1,1 @@
+Anas AMIRI <amiria@3il.fr> : Aide sur AdaptateurAlgorithme et en discutant avec Anas on a eu l'idée de remplacer les couleurs des tuiles par des images (images issus du mini projet 1)
