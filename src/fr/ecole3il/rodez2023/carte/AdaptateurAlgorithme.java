@@ -3,103 +3,128 @@ package fr.ecole3il.rodez2023.carte;
 import fr.ecole3il.rodez2023.carte.chemin.algorithmes.AlgorithmeChemin;
 import fr.ecole3il.rodez2023.carte.chemin.elements.Graphe;
 import fr.ecole3il.rodez2023.carte.chemin.elements.Noeud;
-import fr.ecole3il.rodez2023.carte.elements.Carte;
 import fr.ecole3il.rodez2023.carte.elements.Case;
 import fr.ecole3il.rodez2023.carte.elements.Chemin;
-import fr.ecole3il.rodez2023.carte.elements.Tuile;
+import fr.ecole3il.rodez2023.carte.elements.Carte;
 
 import java.util.ArrayList;
 import java.util.List;
+
 /**
- * Adapter class to use the pathfinding algorithms with the map.
+ * AdaptateurAlgorithme est une classe utilitaire qui permet d'adapter un algorithme de recherche de chemin
+ * pour trouver un chemin entre deux cases sur une carte.
  */
-public class AdaptateurAlgorithme {
+public class AdaptateurAlgorithme{
     /**
-     * Find the shortest path between two points on the map.
-     * @param algorithme it is the pathfinding algorithm to use.
-     * @param carte it is the map where the path is.
-     * @param xDepart it is the x coordinate of the starting point.
-     * @param yDepart it is the y coordinate of the starting point.
-     * @param xArrivee it is the x coordinate of the ending point.
-     * @param yArrivee it is the y coordinate of the ending point.
-     * @return the shortest path between the two points.
+     * Trouve un chemin entre deux cases sur une carte en utilisant un algorithme de recherche de chemin.
+     * @param algorithme L'algorithme de recherche de chemin à utiliser.
+     * @param carte La carte sur laquelle trouver le chemin.
+     * @param xDepart La coordonnée x de la case de départ.
+     * @param yDepart La coordonnée y de la case de départ.
+     * @param xArrivee La coordonnée x de la case d'arrivée.
+     * @param yArrivee La coordonnée y de la case d'arrivée.
+     * @return Un objet Chemin représentant le chemin trouvé entre les deux cases.
      */
     public static Chemin trouverChemin(AlgorithmeChemin<Case> algorithme, Carte carte, int xDepart, int yDepart, int xArrivee, int yArrivee){
         Graphe<Case> graphe = creerGraphe(carte);
+        Noeud<Case> noeudDepart = graphe.getNoeud(xDepart, yDepart);
+        Noeud<Case> noeudArrivee = graphe.getNoeud(xArrivee, yArrivee);
+        List<Noeud<Case>> cheminNoeuds = algorithme.trouverChemin(graphe, noeudDepart, noeudArrivee);
 
-        Tuile tuileDepart = carte.getTuile(xDepart, yDepart);
-        Case depart = new Case(tuileDepart, xDepart, yDepart);
+        afficherChemin(cheminNoeuds);
 
-        Tuile tuileArrivee = carte.getTuile(xArrivee, yArrivee);
-        Case arrivee = new Case(tuileArrivee, xArrivee, yArrivee);
+        List<Case> cheminCases = new ArrayList<>();
+        for (Noeud<Case> noeud : cheminNoeuds) {
+            cheminCases.add(noeud.getValeur());
+        }
 
-        List<Noeud<Case>> chemin = algorithme.trouverChemin(graphe, new Noeud<>(depart), new Noeud<>(arrivee));
-
-        return afficherChemin(chemin);
+        return new Chemin(cheminCases);
     }
-    /** Create a graph from a map.
-     * @param carte it is the map where the nodes are.
-     * @return the graph created.
+
+    /**
+     * Crée un graphe à partir d'une carte.
+     * @param carte La carte à utiliser pour créer le graphe.
+     * @return Un objet Graphe représentant la carte sous forme de graphe.
      */
     static Graphe<Case> creerGraphe(Carte carte){
         Graphe<Case> graphe = new Graphe<>();
         int largeur = carte.getLargeur();
         int hauteur = carte.getHauteur();
-        for(int x = 0; x < largeur; x++){
-            for(int y = 0; y < hauteur; y++){
-                Tuile tuileCourante = carte.getTuile(x, y);
-                Case caseCourante = new Case(tuileCourante, x, y);
-                graphe.ajouterNoeud(new Noeud<>(caseCourante));
-                ajouterAretesVoisines(graphe, caseCourante, x, y, largeur, hauteur);
+
+        for (int x = 0; x < largeur; x++) {
+            for (int y = 0; y < hauteur; y++) {
+                Case caseActuelle = new Case(carte.getTuile(x, y), x, y);
+                graphe.ajouterNoeud(new Noeud<>(caseActuelle));
             }
         }
+
+        for (int x = 0; x < largeur; x++) {
+            for (int y = 0; y < hauteur; y++) {
+                Case caseActuelle = new Case(carte.getTuile(x, y), x, y);
+                ajouterAretesVoisines(graphe, caseActuelle, x, y, largeur, hauteur);
+            }
+        }
+
         return graphe;
     }
-    /** Add edges to the graph for the neighbors of a node.
-     * @param graphe it is the graph where the nodes are.
-     * @param currentCase it is the node where the edges are added.
-     * @param x it is the x coordinate of the node.
-     * @param y it is the y coordinate of the node.
-     * @param largeur it is the width of the map.
-     * @param hauteur it is the height of the map.
+
+    /**
+     * Ajoute des arêtes entre un nœud et ses nœuds voisins dans un graphe.
+     * @param graphe Le graphe dans lequel ajouter les arêtes.
+     * @param currentCase La case actuelle pour laquelle ajouter des arêtes.
+     * @param x La coordonnée x de la case actuelle.
+     * @param y La coordonnée y de la case actuelle.
+     * @param largeur La largeur de la carte.
+     * @param hauteur La hauteur de la carte.
      */
     static void ajouterAretesVoisines(Graphe<Case> graphe, Case currentCase, int x, int y, int largeur, int hauteur){
+        // Get the current node from the graph
+        Noeud<Case> currentNode = null;
+        for (Noeud<Case> noeud : graphe.getNoeuds()) {
+            Case c = noeud.getValeur();
+            if (c.equals(currentCase)) {
+                currentNode = noeud;
+                break;
+            }
+        }
 
+        int[][] directions = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+        for (int[] direction : directions) {
+            int newX = x + direction[0];
+            int newY = y + direction[1];
+
+            if (newX >= 0 && newX < largeur && newY >= 0 && newY < hauteur) {
+
+                Noeud<Case> neighborNode = graphe.getNoeud(newX, newY);
+                Case neighborCase = neighborNode.getValeur();
+
+                double cost = calculerCout(currentCase, neighborCase);
+
+                graphe.ajouterArete(currentNode, neighborNode, cost);
+
+                assert currentNode != null;
+                currentNode.ajouterVoisin(neighborNode);
+            }
+        }
     }
-
     /**
-     * Calculate the cost of an edge between two nodes.
-     * @param from it is the starting node.
-     * @param to it is the ending node.
-     * @return the cost of the edge.
+     * Calcule le coût entre deux cases.
+     * @param from La case de départ.
+     * @param to La case d'arrivée.
+     * @return Le coût entre les deux cases.
      */
     static double calculerCout(Case from, Case to){
-        if(from == null || to == null)
-            return Double.POSITIVE_INFINITY;
-        return 1;
+        return Math.abs(from.getX() - to.getX()) + Math.abs(from.getY() - to.getY());
     }
 
     /**
-     * Display the path found.
-     * @param chemin it is the path found.
-     * @return the path found.
+     * Affiche un chemin sur la console en affichant les coordonnées et le type de tuile de chaque case.
+     * @param chemin Le chemin à afficher.
      */
-    static Chemin afficherChemin(List<Noeud<Case>> chemin){
-        if (chemin.isEmpty()) {
-            System.out.println("No path found!");
-            return new Chemin(new ArrayList<>());
+    static void afficherChemin(List<Noeud<Case>> chemin){
+        for (Noeud<Case> noeud : chemin) {
+            Case caseActuelle = noeud.getValeur();
+            System.out.println("Case: x = " + caseActuelle.getX() + ", y = " + caseActuelle.getY()+", tuile = " + caseActuelle.getTuile());
         }
-
-        System.out.print("Path: ");
-        List<Case> cheminCases = new ArrayList<>();
-        for (Noeud<Case> noeud : chemin){
-            Case caseNode = noeud.getValeur();
-            cheminCases.add(caseNode);
-            System.out.print(" -> " + caseNode.toString());
-        }
-        System.out.println();
-
-        return new Chemin(cheminCases);
     }
-
 }
